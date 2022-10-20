@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<input type="text" id="msg">
+<input type="button" value="连接" onclick="connect()">
+
+<input type="button" value="断开" onclick="disconnect()">
+
+<!--
+ 高级api  不兼容  但是有一个socket.io这个库，是兼容的(一般用这个)
+ -->
+
+<script type="text/javascript">
+    let socket = new WebSocket("ws://localhost:8000/websocket/123");//ws协议是webSocket自己创造的
+    socket.onopen=function(e){
+        console.info("connect success")
+    }
+    socket.onmessage = function(e){
+        console.log(e.data);
+    }
+</script>
+</body>
+</html>

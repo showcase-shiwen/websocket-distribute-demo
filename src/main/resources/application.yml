@@ -1,0 +1,17 @@
+server:
+  port: 8000
+  context-path: /
+spring:
+  application:
+    name: websocket
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+nacos:
+  discovery:
+#    register:
+#      ip:
+#      port:
+    autoRegister: true
+    server-addr: 192.168.11.91:31587
+    namespace: 'b5d9fceb-a0bb-4da9-9260-875cca143961'
