@@ -6,6 +6,8 @@ import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
@@ -17,9 +19,11 @@ public class WebSocket {
     // 用来存在线连接用户信息
     private static ConcurrentHashMap<String, Session> sessionPool = new ConcurrentHashMap<String, Session>();
 
+    private Session session;
     @OnOpen
     public void onOpen(Session session, @PathParam(value = "userId") String userId) {
         try {
+            this.session=session;
             sessionPool.put(userId, session);
             this.userId=userId;
             session.getBasicRemote().sendText("连接成功");
@@ -46,10 +50,15 @@ public class WebSocket {
      * @param message
      */
     @OnMessage
-    public void onMessage(String message) {
+    public void onMessage(String message) throws IOException {
         // a b 不在同一节点时
         // 遍历 sessionPoos 转发其它节点
         System.out.println("【websocket消息】收到客户端消息:" + message);
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        String str=simpleDateFormat.format(new Date())+" server:"+message;
+//        session.getBasicRemote().sendText();
+
+        broadcastMSg(str);
     }
 
     @OnError

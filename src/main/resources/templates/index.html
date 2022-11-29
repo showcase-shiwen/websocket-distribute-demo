@@ -5,23 +5,66 @@
     <title></title>
 </head>
 <body>
-<input type="text" id="msg">
 <input type="button" value="连接" onclick="connect()">
 
-<input type="button" value="断开" onclick="disconnect()">
+<input type="button" value="断开" onclick="disconnect()" disabled="disabled">
+<hr>
+<input type="text" id="msg"><input type="button" value="发送" onclick="send()" disabled="disabled">
+<input type="button" value="清屏" onclick="document.getElementById('showArea').innerHTML=''">
+<h3>公屏区域</h3>
+<hr>
+<div id="showArea">
+</div>
 
 <!--
  高级api  不兼容  但是有一个socket.io这个库，是兼容的(一般用这个)
  -->
 
 <script type="text/javascript">
-    let socket = new WebSocket("ws://localhost:8000/websocket/123");//ws协议是webSocket自己创造的
-    socket.onopen=function(e){
-        console.info("connect success")
+
+    let isConnect=false;
+    let socket;
+    let inputDom=document.getElementsByTagName('input');
+    function connect(){
+
+        let connectBtn = inputDom[0];
+        let disConnectBtn = inputDom[1];
+        let sendBtn = inputDom[3];
+         if(isConnect){
+
+             return;
+         }
+
+         socket = new WebSocket("ws://localhost:8000/websocket/123");//ws协议是webSocket自己创造的
+         socket.onopen=function(e){
+             isConnect=true;
+             connectBtn.disabled=isConnect;
+             sendBtn.disabled=!isConnect;
+             disConnectBtn.disabled=!isConnect;
+            console.info("connect success")
+         }
+        socket.onmessage = function(e){
+            var showAreaDom=document.getElementById('showArea');
+            showAreaDom.innerHTML+='<h1>'+e.data+'</h1>'
+        }
     }
-    socket.onmessage = function(e){
-        console.log(e.data);
+    function disconnect(){
+        let connectBtn = document.getElementsByTagName('input')[0];
+        let disConnectBtn = document.getElementsByTagName('input')[1];
+        isConnect=false;
+        connectBtn.disabled=isConnect;
+        disConnectBtn.disabled=!isConnect;
+        socket.close()
     }
+    function send(){
+        console.info("send")
+        var text=inputDom[2].value;
+        if(text!='' && text != undefined){
+            inputDom[2].value='';
+            socket.send(text);
+        }
+    }
+
 </script>
 </body>
 </html>
