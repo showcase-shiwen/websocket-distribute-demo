@@ -6,14 +6,16 @@
     <title></title>
 </head>
 <body>
+
 <input type="text" placeholder="请输入用户名">
 <input type="button" value="连接" onclick="connect()">
-
 <input type="button" value="断开" onclick="disconnect()" disabled="disabled">
+
 <hr>
 <input type="text" id="msg"><input type="button" value="发送" onclick="send()" disabled="disabled">
 <input type="button" value="清屏" onclick="document.getElementById('showArea').innerHTML=''">
 <h3>公屏区域</h3>
+
 <hr>
 <div id="showArea">
 </div>
@@ -49,10 +51,10 @@
              connectBtn.disabled=isConnect;
              sendBtn.disabled=!isConnect;
              disConnectBtn.disabled=!isConnect;
-            console.info("connect success")
+             console.info("connect success")
          }
         socket.onmessage = function(e){
-            var showAreaDom=document.getElementById('showArea');
+            let showAreaDom=document.getElementById('showArea');
             showAreaDom.innerHTML+='<h1>'+e.data+'</h1>'
         }
     }
@@ -66,7 +68,7 @@
     }
     function send(){
         console.info("send")
-        var text=inputDom[3].value;
+        let text=inputDom[3].value;
         if(text!='' && text != undefined){
             inputDom[3].value='';
             socket.send(text);

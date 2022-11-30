@@ -44,12 +44,17 @@ public class WebSocket {
     }
 
     /**
+     *  FIXME 心跳暂不实现 客户端 起一个 setInterval
+     *  window.setInterval(function(){
+     *       socket.send("heartbeat")
+     *  },1000)
      * 收到客户端消息后调用的方法
      *
      * @param message
      */
     @OnMessage
     public void onMessage( @PathParam(value = "userId") String userId,String message) throws IOException {
+
         // a b 不在同一节点时
         // 遍历 sessionPoos 转发其它节点
         System.out.println("【websocket消息】收到客户端消息:" + message);
