@@ -2,9 +2,11 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,height=device-height, user-scalable=no,initial-scale=1, minimum-scale=1, maximum-scale=1,target-densitydpi=device-dpi ">
     <title></title>
 </head>
 <body>
+<input type="text" placeholder="请输入用户名">
 <input type="button" value="连接" onclick="connect()">
 
 <input type="button" value="断开" onclick="disconnect()" disabled="disabled">
@@ -27,15 +29,21 @@
     let inputDom=document.getElementsByTagName('input');
     function connect(){
 
-        let connectBtn = inputDom[0];
-        let disConnectBtn = inputDom[1];
-        let sendBtn = inputDom[3];
+        let connectBtn = inputDom[1];
+        let disConnectBtn = inputDom[2];
+        let sendBtn = inputDom[4];
          if(isConnect){
 
              return;
          }
 
-         socket = new WebSocket("ws://localhost:8000/websocket/123");//ws协议是webSocket自己创造的
+         let userFlag=inputDom[0].value
+        if(userFlag==''){
+            alert("请输入用户名")
+            return;
+        }
+         const url="ws://"+window.location.host+"/websocket/"+userFlag;
+         socket = new WebSocket(url);//ws协议是webSocket自己创造的
          socket.onopen=function(e){
              isConnect=true;
              connectBtn.disabled=isConnect;
@@ -49,8 +57,8 @@
         }
     }
     function disconnect(){
-        let connectBtn = document.getElementsByTagName('input')[0];
-        let disConnectBtn = document.getElementsByTagName('input')[1];
+        let connectBtn = document.getElementsByTagName('input')[1];
+        let disConnectBtn = document.getElementsByTagName('input')[2];
         isConnect=false;
         connectBtn.disabled=isConnect;
         disConnectBtn.disabled=!isConnect;
@@ -58,9 +66,9 @@
     }
     function send(){
         console.info("send")
-        var text=inputDom[2].value;
+        var text=inputDom[3].value;
         if(text!='' && text != undefined){
-            inputDom[2].value='';
+            inputDom[3].value='';
             socket.send(text);
         }
     }

@@ -26,8 +26,7 @@ public class WebSocket {
             this.session=session;
             sessionPool.put(userId, session);
             this.userId=userId;
-            session.getBasicRemote().sendText("连接成功");
-            System.out.println("【websocket消息】有新的连接，总数为:" + sessionPool.size());
+            broadcastMSg("欢迎【"+userId+"】上线");
         } catch (Exception e) {
         }
     }
@@ -50,15 +49,15 @@ public class WebSocket {
      * @param message
      */
     @OnMessage
-    public void onMessage(String message) throws IOException {
+    public void onMessage( @PathParam(value = "userId") String userId,String message) throws IOException {
         // a b 不在同一节点时
         // 遍历 sessionPoos 转发其它节点
         System.out.println("【websocket消息】收到客户端消息:" + message);
         SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        String str=simpleDateFormat.format(new Date())+" server:"+message;
+        String str=simpleDateFormat.format(new Date())+" "+userId+" :"+message;
 //        session.getBasicRemote().sendText();
 
-        broadcastMSg(str);
+        broadcastMSg(null,str);
     }
 
     @OnError
@@ -71,11 +70,15 @@ public class WebSocket {
      * 广播消息
      * @param msg
      */
-    public void broadcastMSg(String msg) {
+    public void broadcastMSg(String system,String msg) {
         sessionPool.values().forEach(session->{
             if(session.isOpen()){
                 try {
-                    session.getBasicRemote().sendText(msg);
+                    if(system==null||system.equals("")){
+                        session.getBasicRemote().sendText(msg);
+                    }else{
+                        session.getBasicRemote().sendText(system+"："+msg);
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -86,5 +89,9 @@ public class WebSocket {
 
     public int getOnlineCount() {
        return sessionPool.size();
+    }
+
+    public void broadcastMSg(String msg) {
+        broadcastMSg("系统",msg);
     }
 }
